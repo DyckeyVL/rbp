@@ -4,10 +4,12 @@ func _ready() -> void:
 	body_entered.connect(_al_tocar_jugador)
 
 func _al_tocar_jugador(body: Node2D) -> void:
-
 	if not body.is_in_group("jugador"):
 		return
 
-	print("ORBE RECOGIDO: CERRANDO JUEGO")
+	if body.has_method("activar_orbe"):
+		body.activar_orbe()
 
-	get_tree().quit()
+	print("ORBE RECOGIDO: PODERES ACTIVADOS")
+
+	queue_free()
