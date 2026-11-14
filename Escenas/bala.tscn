@@ -1,0 +1,56 @@
+[gd_scene format=3 uid="uid://du0cvrqa5jjhu"]
+
+[ext_resource type="Script" uid="uid://c5shx2uocgitc" path="res://Escenas/bala.gd" id="1_r8vkm"]
+[ext_resource type="Texture2D" uid="uid://c2i2qdfdkvooc" path="res://Sprites/Sprite-0001-Sheet.png" id="2_r8vkm"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_my55k"]
+atlas = ExtResource("2_r8vkm")
+region = Rect2(0, 0, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_hi2wk"]
+atlas = ExtResource("2_r8vkm")
+region = Rect2(16, 0, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_jc45k"]
+atlas = ExtResource("2_r8vkm")
+region = Rect2(32, 0, 16, 16)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_g4v7s"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_my55k")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_hi2wk")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_jc45k")
+}],
+"loop": 1,
+"name": &"mov_bala",
+"speed": 20.0
+}]
+
+[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_g4v7s"]
+radius = 0.9999531
+height = 9.999698
+
+[node name="bala" type="Area2D" unique_id=1380090255]
+collision_layer = 2
+collision_mask = 7
+script = ExtResource("1_r8vkm")
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=2032697657]
+modulate = Color(0, 1, 1, 1)
+position = Vector2(-1.000001, 0)
+rotation = 0.012390765
+sprite_frames = SubResource("SpriteFrames_g4v7s")
+animation = &"mov_bala"
+frame_progress = 0.78496397
+
+[node name="bala_colision" type="CollisionShape2D" parent="." unique_id=1627802206]
+light_mask = 2
+visibility_layer = 7
+rotation = 3.1338177
+shape = SubResource("CapsuleShape2D_g4v7s")

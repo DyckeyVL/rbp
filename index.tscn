@@ -1,0 +1,7 @@
+[gd_scene format=3 uid="uid://d1nc7bvko3qcu"]
+
+[ext_resource type="PackedScene" uid="uid://cmge4oticeccg" path="res://mapa_general.tscn" id="1_356j3"]
+
+[node name="Node" type="Node" unique_id=1360361983]
+
+[node name="Mapa general" parent="." unique_id=1279299196 instance=ExtResource("1_356j3")]

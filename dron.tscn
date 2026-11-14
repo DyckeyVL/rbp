@@ -1,0 +1,79 @@
+[gd_scene format=3 uid="uid://c1csmdo4n8n1u"]
+
+[ext_resource type="Script" uid="uid://d1s3o08ergufd" path="res://dron.gd" id="1_27w2c"]
+[ext_resource type="Texture2D" uid="uid://dmq1ty7kv4vm5" path="res://Sprites/Sprite-0005-Sheet.png" id="2_k4fkf"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_mx5wa"]
+atlas = ExtResource("2_k4fkf")
+region = Rect2(0, 0, 64, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_xywq6"]
+atlas = ExtResource("2_k4fkf")
+region = Rect2(64, 0, 64, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_bovs6"]
+atlas = ExtResource("2_k4fkf")
+region = Rect2(128, 0, 64, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_lw4bb"]
+atlas = ExtResource("2_k4fkf")
+region = Rect2(192, 0, 64, 64)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_g4v7s"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_mx5wa")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_xywq6")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_bovs6")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_lw4bb")
+}],
+"loop": 1,
+"name": &"mover",
+"speed": 25.0
+}]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_g4v7s"]
+size = Vector2(13, 11)
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_bbbm0"]
+radius = 180.45
+
+[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_yf5fn"]
+radius = 7.0
+height = 14.0
+
+[node name="Dron" type="CharacterBody2D" unique_id=228886901]
+script = ExtResource("1_27w2c")
+chase_speed = 100.0
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=934601429]
+position = Vector2(1.0000095, -1.0000086)
+scale = Vector2(0.42578128, 0.3945315)
+sprite_frames = SubResource("SpriteFrames_g4v7s")
+animation = &"mover"
+frame_progress = 0.08141119
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=257821118]
+light_mask = 2
+visibility_layer = 0
+position = Vector2(1, -1)
+shape = SubResource("RectangleShape2D_g4v7s")
+
+[node name="Area2D" type="Area2D" parent="." unique_id=1611049595]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Area2D" unique_id=1607960418]
+position = Vector2(2, -1)
+shape = SubResource("CircleShape2D_bbbm0")
+
+[node name="Area2D2" type="Area2D" parent="." unique_id=1341133973]
+
+[node name="hitbox" type="CollisionShape2D" parent="Area2D2" unique_id=1797658342]
+position = Vector2(2, 0)
+shape = SubResource("CapsuleShape2D_yf5fn")

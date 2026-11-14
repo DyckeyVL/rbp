@@ -1,0 +1,36 @@
+[gd_scene format=3 uid="uid://djpi0ahqudc4c"]
+
+[ext_resource type="Texture2D" uid="uid://dhlxt3dau0qj7" path="res://Sprites/Bloques.png" id="1_1jhv7"]
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_q4lj4"]
+texture = ExtResource("1_1jhv7")
+0:0/0 = 0
+1:0/0 = 0
+2:0/0 = 0
+3:0/0 = 0
+4:0/0 = 0
+5:0/0 = 0
+6:0/0 = 0
+7:0/0 = 0
+8:0/0 = 0
+9:0/0 = 0
+0:1/0 = 0
+1:1/0 = 0
+2:1/0 = 0
+3:1/0 = 0
+4:1/0 = 0
+5:1/0 = 0
+6:1/0 = 0
+7:1/0 = 0
+8:1/0 = 0
+9:1/0 = 0
+
+[sub_resource type="TileSet" id="TileSet_tmssg"]
+physics_layer_0/collision_layer = 1
+physics_layer_0/collision_mask = 0
+physics_layer_1/collision_layer = 2
+physics_layer_1/collision_mask = 0
+sources/0 = SubResource("TileSetAtlasSource_q4lj4")
+
+[node name="TileMapLayer" type="TileMapLayer" unique_id=603800111]
+tile_set = SubResource("TileSet_tmssg")
