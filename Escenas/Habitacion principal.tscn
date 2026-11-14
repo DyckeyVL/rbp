@@ -1,6 +1,6 @@
 [gd_scene format=4 uid="uid://cdkjbtk7fqg2l"]
 
-[ext_resource type="PackedScene" uid="uid://bmt70fox43r84" path="res://Mapa.tscn" id="1_agct6"]
+[ext_resource type="PackedScene" uid="uid://bmt70fox43r84" path="res://Escenas/Mapa.tscn" id="1_agct6"]
 [ext_resource type="Texture2D" uid="uid://dhlxt3dau0qj7" path="res://Sprites/Bloques.png" id="2_urmr8"]
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_d1yoc"]

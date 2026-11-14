@@ -1,4 +1,9 @@
+
 extends CharacterBody2D
+
+# ==========================================
+# MOVIMIENTO
+# ==========================================
 
 @export_group("Movimiento")
 @export var speed: float = 125.0
@@ -6,17 +11,43 @@ extends CharacterBody2D
 @export var acceleration: float = 900.0
 @export var deceleration: float = 1200.0
 
+# ==========================================
+# SALTO
+# ==========================================
+
 @export_group("Salto")
 @export var jump_force: float = -200.0
 @export var gravity: float = 400.0
 @export var max_fall_speed: float = 900.0
 
+var saltos_realizados: int = 0
+
+# ==========================================
+# CARRERA
+# ==========================================
+
 @export_group("Carrera")
 @export var tiempo_carrera: float = 3.0
 
+var corriendo: bool = false
+
+# ==========================================
+# VIDA
+# ==========================================
+
 @export_group("Vida")
 @export var vida_maxima: int = 100
+
 var vida_actual: int = 100
+
+@onready var barra_vida: ProgressBar = $CanvasLayer/ProgressBar
+
+var derrotado: bool = false
+var punto_aparicion: Vector2
+
+# ==========================================
+# DISPARO
+# ==========================================
 
 @export_group("Disparo")
 @export var bala: PackedScene
@@ -25,7 +56,31 @@ var vida_actual: int = 100
 var puede_disparar: bool = false
 var tiempo_restante_disparo: float = 0.0
 
-@onready var barra_vida: ProgressBar = $CanvasLayer/ProgressBar
+# ==========================================
+# SKINS
+# ==========================================
+
+@export_group("Skins")
+@export var skin_bateria: SpriteFrames
+@export var skin_orbe: SpriteFrames
+
+var skin_original: SpriteFrames
+var tiene_bateria: bool = false
+
+# ==========================================
+# PODER DE LA ORBE
+# ==========================================
+
+@export_group("Poder de la orbe")
+@export var bonus_velocidad_orbe: float = 60.0
+@export var saltos_maximos: int = 2
+
+var poder_orbe_activo: bool = false
+
+# ==========================================
+# NODOS
+# ==========================================
+
 @onready var Anim: AnimatedSprite2D = $AnimatedSprite2D
 @onready var timer: Timer = $Timer
 
@@ -41,11 +96,17 @@ var moviendo: bool = false:
 			else:
 				no_se_mueve.emit()
 
-var corriendo: bool = false
 
+# ==========================================
+# INICIALIZACIÓN
+# ==========================================
 
 func _ready() -> void:
+
+	add_to_group("jugador")
+
 	Anim.play("idle")
+	skin_original = Anim.sprite_frames
 
 	se_mueve.connect(en_movimiento)
 	no_se_mueve.connect(sin_movimiento)
@@ -53,20 +114,29 @@ func _ready() -> void:
 	timer.one_shot = true
 	timer.timeout.connect(_al_terminar_tiempo)
 
+	vida_actual = vida_maxima
+
 	barra_vida.max_value = vida_maxima
 	barra_vida.value = vida_actual
 	barra_vida.show_percentage = false
 	barra_vida.position = Vector2(20, 20)
 	barra_vida.size = Vector2(250, 24)
 	
-	add_to_group("jugador")
+	punto_aparicion = global_position
 
+
+# ==========================================
+# MOVIMIENTO PRINCIPAL
+# ==========================================
 
 func _physics_process(delta: float) -> void:
+	
+	if derrotado:
+		return
 
-	# Tiempo de espera entre disparos
 	tiempo_restante_disparo = maxf(
-		tiempo_restante_disparo - delta, 0.0
+		tiempo_restante_disparo - delta,
+		0.0
 	)
 
 	var dir: float = Input.get_axis("izquierda", "derecha")
@@ -77,6 +147,10 @@ func _physics_process(delta: float) -> void:
 
 	if corriendo:
 		velocidad_objetivo += bonus_carrera
+
+	# Bonus de velocidad de la orbe
+	if poder_orbe_activo:
+		velocidad_objetivo += bonus_velocidad_orbe
 
 	if moviendo:
 		velocity.x = move_toward(
@@ -91,28 +165,51 @@ func _physics_process(delta: float) -> void:
 			deceleration * delta
 		)
 
-	# Dirección hacia donde mira el personaje
+	# Dirección del personaje
 	if dir > 0:
 		Anim.flip_h = false
 	elif dir < 0:
 		Anim.flip_h = true
 
-	# Salto
-	if Input.is_action_just_pressed("salto") and is_on_floor():
-		velocity.y = jump_force
-	elif not is_on_floor():
+	# ======================================
+	# SALTO Y DOBLE SALTO
+	# ======================================
+
+	if is_on_floor():
+		saltos_realizados = 0
+	else:
 		velocity.y += gravity * delta
 		velocity.y = min(velocity.y, max_fall_speed)
+
+	if Input.is_action_just_pressed("salto"):
+
+		var limite_saltos: int = 1
+
+		if poder_orbe_activo:
+			limite_saltos = saltos_maximos
+
+		if saltos_realizados < limite_saltos:
+
+			velocity.y = jump_force
+			saltos_realizados += 1
 
 	move_and_slide()
 
 	actualizar_animaciones()
 
-	# Disparo
+	# ======================================
+	# DISPARAR
+	# ======================================
+
 	if Input.is_action_just_pressed("disparar"):
+
 		if puede_disparar and tiempo_restante_disparo <= 0.0:
 			disparar()
 
+
+# ==========================================
+# DISPAROS
+# ==========================================
 
 func disparar() -> void:
 
@@ -126,59 +223,163 @@ func disparar() -> void:
 		print("ERROR: No se pudo crear la bala")
 		return
 
-	# Si mira a la izquierda, dirección -1.
-	# Si mira a la derecha, dirección 1.
 	var direccion_disparo: float = -1.0 if Anim.flip_h else 1.0
 
 	nueva_bala.set("direccion", direccion_disparo)
 
 	get_parent().add_child(nueva_bala)
 
-	# Aparece delante del personaje
 	nueva_bala.global_position = global_position + Vector2(
-		24.0 * direccion_disparo, 0.0
+		24.0 * direccion_disparo,
+		0.0
 	)
 
-	# Esperar un segundo antes del siguiente disparo
 	tiempo_restante_disparo = intervalo_disparo
 
 	print("BALA CREADA")
 
 
+# ==========================================
+# CARRERA
+# ==========================================
+
 func en_movimiento() -> void:
+
 	corriendo = false
 	timer.start(tiempo_carrera)
 
 
 func sin_movimiento() -> void:
+
 	timer.stop()
 	corriendo = false
 
 
 func _al_terminar_tiempo() -> void:
+
 	if moviendo:
 		corriendo = true
 
 
+# ==========================================
+# ANIMACIONES
+# ==========================================
+
 func actualizar_animaciones() -> void:
+
 	if not is_on_floor():
+
 		if Anim.animation != "saltar":
 			Anim.play("saltar")
+
 	elif abs(velocity.x) > 5.0:
+
 		if Anim.animation != "correr":
 			Anim.play("correr")
+
 	else:
+
 		if Anim.animation != "idle":
 			Anim.play("idle")
 
 
+# ==========================================
+# CAMBIO DE SKIN
+# ==========================================
+
+func actualizar_skin() -> void:
+
+	if poder_orbe_activo and skin_orbe != null:
+		Anim.sprite_frames = skin_orbe
+
+	elif tiene_bateria and skin_bateria != null:
+		Anim.sprite_frames = skin_bateria
+
+	else:
+		Anim.sprite_frames = skin_original
+
+	# Reiniciar animación para aplicar la nueva apariencia
+	Anim.play("idle")
+
+
+# ==========================================
+# BATERÍA
+# ==========================================
+
+func cambiar_skin_bateria() -> void:
+
+	if tiene_bateria:
+		return
+
+	tiene_bateria = true
+
+	actualizar_skin()
+
+	print("BATERÍA: SKIN ACTIVADA")
+
+
+# ==========================================
+# PODER DE LA ORBE
+# ==========================================
+
+func activar_orbe() -> void:
+
+	if poder_orbe_activo:
+		return
+
+	poder_orbe_activo = true
+
+	actualizar_skin()
+
+	print("ORBE: DOBLE SALTO DESBLOQUEADO")
+	print("ORBE: VELOCIDAD MEJORADA")
+	print("ORBE: NUEVA SKIN ACTIVADA")
+
+
+# ==========================================
+# RECIBIR DAÑO
+# ==========================================
+
 func recibir_danio(cantidad: int) -> void:
-	if vida_actual <= 0:
+
+	if vida_actual <= 0 or derrotado:
 		return
 
 	vida_actual -= cantidad
 	vida_actual = clampi(vida_actual, 0, vida_maxima)
+
 	barra_vida.value = vida_actual
 
-	if vida_actual == 0:
-		print("Jugador derrotado")
+	print("VIDA DEL JUGADOR: ", vida_actual)
+
+	if vida_actual <= 0:
+		reaparecer()
+
+func reaparecer() -> void:
+
+	derrotado = true
+
+	# Detener movimiento
+	velocity = Vector2.ZERO
+
+	# Regresar al inicio
+	global_position = punto_aparicion
+
+	# Recuperar vida
+	vida_actual = vida_maxima
+	barra_vida.value = vida_actual
+
+	# Reiniciar animación
+	Anim.play("idle")
+
+	derrotado = false
+
+	print("JUGADOR: REAPARECIÓ")
+	
+	# Revivir todos los enemigos derrotados
+	var enemigos = get_tree().get_nodes_in_group("enemigos_muertos")
+
+	for enemigo in enemigos:
+
+		if enemigo.has_method("reiniciar_enemigo"):
+			enemigo.reiniciar_enemigo()

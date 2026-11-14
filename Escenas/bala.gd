@@ -1,7 +1,7 @@
 
 extends Area2D
 
-@export var velocidad_bala: float = 200.0
+@export var velocidad_bala: float = 400
 
 var direccion: float = 1.0
 

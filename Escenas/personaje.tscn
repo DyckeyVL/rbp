@@ -1,0 +1,96 @@
+[gd_scene format=3 uid="uid://cv7ob486u8ymh"]
+
+[ext_resource type="Script" uid="uid://xim6587uvrs5" path="res://personaje.gd" id="1_yppqc"]
+[ext_resource type="PackedScene" uid="uid://du0cvrqa5jjhu" path="res://Escenas/bala.tscn" id="2_gj0cs"]
+[ext_resource type="Texture2D" uid="uid://cxjjbt7h1h6cy" path="res://Sprites/Sprite-0001-Sheet-Sheet.png" id="3_ck3sb"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_ir7so"]
+atlas = ExtResource("3_ck3sb")
+region = Rect2(0, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_d1yoc"]
+atlas = ExtResource("3_ck3sb")
+region = Rect2(32, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_2fy20"]
+atlas = ExtResource("3_ck3sb")
+region = Rect2(64, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_mvkpm"]
+atlas = ExtResource("3_ck3sb")
+region = Rect2(0, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_6cdi6"]
+atlas = ExtResource("3_ck3sb")
+region = Rect2(128, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_dfxun"]
+atlas = ExtResource("3_ck3sb")
+region = Rect2(160, 0, 32, 32)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_yf5fn"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_ir7so")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_d1yoc")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_2fy20")
+}],
+"loop": 1,
+"name": &"correr",
+"speed": 15.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_mvkpm")
+}],
+"loop": 1,
+"name": &"idle",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_6cdi6")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_dfxun")
+}],
+"loop": 1,
+"name": &"saltar",
+"speed": 5.0
+}]
+
+[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_ir7so"]
+
+[node name="Personaje" type="CharacterBody2D" unique_id=992541701]
+platform_floor_layers = 4294901761
+platform_wall_layers = 2
+script = ExtResource("1_yppqc")
+bala = ExtResource("2_gj0cs")
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=1620649884]
+position = Vector2(0, 1)
+scale = Vector2(1, 1.0625)
+sprite_frames = SubResource("SpriteFrames_yf5fn")
+animation = &"correr"
+
+[node name="Camera2D" type="Camera2D" parent="." unique_id=1671835974]
+position = Vector2(1, 2)
+zoom = Vector2(1.53, 1.53)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=1461473038]
+position = Vector2(-1, 1)
+shape = SubResource("CapsuleShape2D_ir7so")
+
+[node name="Timer" type="Timer" parent="." unique_id=482985106]
+
+[node name="CanvasLayer" type="CanvasLayer" parent="." unique_id=839557078]
+
+[node name="ProgressBar" type="ProgressBar" parent="CanvasLayer" unique_id=2086874005]
+offset_right = 4.0
+offset_bottom = 27.0
+value = 100.0

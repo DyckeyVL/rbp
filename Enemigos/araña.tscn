@@ -264,9 +264,7 @@ shape = SubResource("CapsuleShape2D_57qmd")
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=1421367565]
 position = Vector2(2, -2)
 sprite_frames = SubResource("SpriteFrames_7vl8w")
-animation = &"explosion"
-frame = 14
-frame_progress = 0.5571428
+animation = &"caminar"
 
 [node name="Area2D2" type="Area2D" parent="." unique_id=851438332]
 

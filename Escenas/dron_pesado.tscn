@@ -1,0 +1,3 @@
+[gd_scene format=3 uid="uid://bylwue34t8knd"]
+
+[node name="Dron Pesado" type="CharacterBody2D" unique_id=2381814]
