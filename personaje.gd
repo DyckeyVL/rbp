@@ -6,10 +6,10 @@ extends CharacterBody2D
 # ==========================================
 
 @export_group("Movimiento")
-@export var speed: float = 125.0
+@export var speed: float = 100.0
 @export var bonus_carrera: float = 50.0
-@export var acceleration: float = 900.0
-@export var deceleration: float = 1200.0
+@export var acceleration: float = 800.0
+@export var deceleration: float = 1000.0
 
 # ==========================================
 # SALTO
@@ -383,3 +383,16 @@ func reaparecer() -> void:
 
 		if enemigo.has_method("reiniciar_enemigo"):
 			enemigo.reiniciar_enemigo()
+
+func recuperar_vida(cantidad: int) -> void:
+	vida_actual += cantidad
+	vida_actual = mini(vida_actual, vida_maxima)
+
+	if barra_vida != null:
+		barra_vida.value = vida_actual
+
+	print("JUGADOR: +", cantidad, " PV")
+	
+	for bateria in get_tree().get_nodes_in_group("baterias"):
+		if bateria.has_method("reaparecer_bateria"):
+			bateria.reaparecer_bateria()

@@ -190,18 +190,19 @@ func _al_golpear_jugador(body: Node2D) -> void:
 # ==========================================
 
 func recibir_danio(cantidad: int) -> void:
-
 	if muriendo or derrotado:
 		return
 
 	vida -= cantidad
-	vida = clampi(vida, 0, vida_maxima)
-
-	print("DRON: VIDA ", vida)
+	vida = maxi(vida, 0)
 
 	if vida <= 0:
-		_morir()
+		var jugador = get_tree().get_first_node_in_group("jugador")
 
+		if jugador != null:
+			jugador.recuperar_vida(5)
+
+		_morir()
 
 # ==========================================
 # MORIR
